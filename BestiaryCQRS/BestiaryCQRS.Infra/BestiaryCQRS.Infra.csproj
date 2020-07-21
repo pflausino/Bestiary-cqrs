@@ -8,4 +8,9 @@
     <ProjectReference Include="..\BestiaryCQRS.Api\BestiaryCQRS.Api.csproj" />
     <ProjectReference Include="..\BestiaryCQRS.Domain\BestiaryCQRS.Domain.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="NHibernate" Version="5.3.0" />
+    <PackageReference Include="FluentNHibernate" Version="2.1.2" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.1" />
+  </ItemGroup>
 </Project>
