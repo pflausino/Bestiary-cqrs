@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BestiaryCQRS.Api\BestiaryCQRS.Api.csproj" />
+    <ProjectReference Include="..\BestiaryCQRS.Domain\BestiaryCQRS.Domain.csproj" />
+  </ItemGroup>
+</Project>
