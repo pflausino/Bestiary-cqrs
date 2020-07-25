@@ -1,7 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
+using BestiaryCQRS.Api.Filters;
+using BestiaryCQRS.Domain.Interfaces;
+using BestiaryCQRS.Infra.Mappings;
+using BestiaryCQRS.Infra.Repositories;
+using FluentNHibernate.Cfg;
+using FluentNHibernate.Cfg.Db;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -10,6 +17,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+
 
 namespace BestiaryCQRS.Api
 {
@@ -26,6 +34,27 @@ namespace BestiaryCQRS.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+
+            var connectionString = Configuration["ConnectionString"];
+
+            var _sessionFactory = Fluently.Configure()
+                .Database(MsSqlConfiguration.MsSql2012.ConnectionString(connectionString))
+                .Mappings(m => m.FluentMappings.AddFromAssembly(
+                    Assembly.GetAssembly(typeof(WeaponMap))
+                ))
+                .BuildSessionFactory();
+
+            services.AddSingleton(factory =>
+            {
+                return _sessionFactory.OpenSession();
+            });
+
+            services.AddControllers(opt =>
+            {
+                opt.Filters.Add<NHibernateSessionFilter>();
+            });
+
+            services.AddScoped<IWeaponRepository, WeaponRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

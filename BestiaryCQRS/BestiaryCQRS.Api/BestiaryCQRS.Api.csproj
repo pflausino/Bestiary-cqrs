@@ -9,6 +9,9 @@
     <ProjectReference Include="..\BestiaryCQRS.Domain\BestiaryCQRS.Domain.csproj">
       <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
     </ProjectReference>
+    <ProjectReference Include="..\BestiaryCQRS.Infra\BestiaryCQRS.Infra.csproj">
+      <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="NHibernate" Version="5.3.0" />

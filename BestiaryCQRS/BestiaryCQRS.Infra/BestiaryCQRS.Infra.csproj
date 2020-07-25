@@ -5,7 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BestiaryCQRS.Api\BestiaryCQRS.Api.csproj" />
     <ProjectReference Include="..\BestiaryCQRS.Domain\BestiaryCQRS.Domain.csproj" />
   </ItemGroup>
   <ItemGroup>
