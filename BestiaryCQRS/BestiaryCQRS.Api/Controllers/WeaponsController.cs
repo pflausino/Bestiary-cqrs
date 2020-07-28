@@ -1,4 +1,6 @@
 using System.Threading.Tasks;
+using BestiaryCQRS.BestiaryCQRS.Domain.Commands;
+using BestiaryCQRS.BestiaryCQRS.Domain.Interfaces;
 using BestiaryCQRS.Domain.Entities;
 using BestiaryCQRS.Domain.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -9,17 +11,20 @@ namespace BestiaryCQRS.Api.Controllers
     [Route("api/[controller]")]
     public class WeaponsController : ControllerBase
     {
-        private readonly IWeaponRepository _repository;
-        public WeaponsController(IWeaponRepository repository)
+
+        private readonly ICreateWeaponHandler createWeaponHandler;
+        public WeaponsController(ICreateWeaponHandler createWeaponHandler)
         {
-            _repository = repository;
+            this.createWeaponHandler = createWeaponHandler;
         }
 
         [HttpPost]
-        public async Task<IActionResult> PostWeapon(Weapon weapon)
+        public async Task<IActionResult> PostWeapon(CreateWeaponCommand createWeaponCommand)
         {
-            await _repository.AddAsync(weapon);
-            var test = _repository.GetAll();
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            this.createWeaponHandler.Handle(createWeaponCommand);
 
             return Ok();
         }

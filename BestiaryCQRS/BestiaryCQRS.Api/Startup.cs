@@ -4,9 +4,13 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using BestiaryCQRS.Api.Filters;
+using BestiaryCQRS.BestiaryCQRS.Domain.Handlers;
+using BestiaryCQRS.BestiaryCQRS.Domain.Interfaces;
+using BestiaryCQRS.BestiaryCQRS.Infra.Migrations;
 using BestiaryCQRS.Domain.Interfaces;
 using BestiaryCQRS.Infra.Mappings;
 using BestiaryCQRS.Infra.Repositories;
+using FluentMigrator.Runner;
 using FluentNHibernate.Cfg;
 using FluentNHibernate.Cfg.Db;
 using Microsoft.AspNetCore.Builder;
@@ -44,6 +48,13 @@ namespace BestiaryCQRS.Api
                 ))
                 .BuildSessionFactory();
 
+            var serviceProvider = CreateServices(connectionString);
+
+            using (var scope = serviceProvider.CreateScope())
+            {
+                UpdateDatabase(scope.ServiceProvider);
+            }
+
             services.AddSingleton(factory =>
             {
                 return _sessionFactory.OpenSession();
@@ -55,6 +66,7 @@ namespace BestiaryCQRS.Api
             });
 
             services.AddScoped<IWeaponRepository, WeaponRepository>();
+            services.AddScoped<ICreateWeaponHandler, CreateWeaponHandler>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -76,5 +88,40 @@ namespace BestiaryCQRS.Api
                 endpoints.MapControllers();
             });
         }
+
+        /// <summary>
+        /// Configure the dependency injection services
+        /// </summary>
+        private static IServiceProvider CreateServices(string conn)
+        {
+            return new ServiceCollection()
+                // Add common FluentMigrator services
+                .AddFluentMigratorCore()
+                .ConfigureRunner(rb => rb
+                    // Add SQLite support to FluentMigrator
+                    .AddSqlServer()
+                    // Set the connection string
+                    .WithGlobalConnectionString(conn)
+                    // Define the assembly containing the migrations
+                    .ScanIn(typeof(AddLogTable).Assembly).For.Migrations())
+                // Enable logging to console in the FluentMigrator way
+                .AddLogging(lb => lb.AddFluentMigratorConsole())
+                // Build the service provider
+                .BuildServiceProvider(false);
+        }
+
+        /// <summary>
+        /// Update the database
+        /// </summary>
+        private static void UpdateDatabase(IServiceProvider serviceProvider)
+        {
+            // Instantiate the runner
+            var runner = serviceProvider.GetRequiredService<IMigrationRunner>();
+
+            // Execute the migrations
+            runner.MigrateUp();
+        }
     }
 }
+
+

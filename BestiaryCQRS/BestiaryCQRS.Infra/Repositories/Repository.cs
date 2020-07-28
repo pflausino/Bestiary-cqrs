@@ -16,6 +16,12 @@ namespace BestiaryCQRS.Infra.Repositories
         {
             Session = session;
         }
+
+        public void Add(TEntity entity)
+        {
+            Session.Save(entity);
+        }
+
         public Task AddAsync(TEntity entity)
         {
             return Session.SaveAsync(entity);
