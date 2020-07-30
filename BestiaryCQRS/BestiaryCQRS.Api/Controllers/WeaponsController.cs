@@ -1,3 +1,5 @@
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 using BestiaryCQRS.BestiaryCQRS.Domain.Commands;
 using BestiaryCQRS.BestiaryCQRS.Domain.Interfaces;
@@ -13,7 +15,8 @@ namespace BestiaryCQRS.Api.Controllers
     {
 
         private readonly ICreateWeaponHandler createWeaponHandler;
-        public WeaponsController(ICreateWeaponHandler createWeaponHandler)
+        private readonly IUpdateWeaponHandler updateWeaponHandler;
+        public WeaponsController(ICreateWeaponHandler createWeaponHandler, IUpdateWeaponHandler updateWeaponHandler)
         {
             this.createWeaponHandler = createWeaponHandler;
         }
@@ -24,9 +27,22 @@ namespace BestiaryCQRS.Api.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            this.createWeaponHandler.Handle(createWeaponCommand);
+            var response = await this.createWeaponHandler.Handle(createWeaponCommand);
 
-            return Ok();
+            if (response.Any(r => !r.Success))
+                return BadRequest(response);
+
+            return Ok(response);
+        }
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutWeapon(Guid id, UpdateWeaponCommand updateWeaponCommand)
+        {
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var response = await this.
+
         }
 
     }

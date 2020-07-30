@@ -6,7 +6,7 @@ namespace BestiaryCQRS.Domain.Core.Interfaces
 {
     public interface IRepository<TEntity> where TEntity : Entity
     {
-        Task AddAsync(TEntity entity);
+        Task<object> AddAsync(TEntity entity);
         void Add(TEntity entity);
 
         Task<TEntity> GetByIdAsync(object id);

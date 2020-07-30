@@ -22,7 +22,7 @@ namespace BestiaryCQRS.Infra.Repositories
             Session.Save(entity);
         }
 
-        public Task AddAsync(TEntity entity)
+        public Task<object> AddAsync(TEntity entity)
         {
             return Session.SaveAsync(entity);
         }
