@@ -14,6 +14,7 @@ namespace BestiaryCQRS.Domain.Entities
             Strength = strength;
             Magic = magic;
 
+            Validate(this, new WeaponValidator());
         }
         public virtual string Name { get; protected set; }
         public virtual int Strength { get; protected set; }

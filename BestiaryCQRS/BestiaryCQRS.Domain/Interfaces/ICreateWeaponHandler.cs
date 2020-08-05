@@ -1,12 +1,11 @@
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using BestiaryCQRS.BestiaryCQRS.Domain.Commands;
-using BestiaryCQRS.BestiaryCQRS.Domain.Core.Dto;
+using BestiaryCQRS.Domain.Entities;
 
 namespace BestiaryCQRS.BestiaryCQRS.Domain.Interfaces
 {
     public interface ICreateWeaponHandler
     {
-        Task<IList<NotificationDto>> Handle(CreateWeaponCommand command);
+        Task<Weapon> Handle(CreateWeaponCommand command);
     }
 }

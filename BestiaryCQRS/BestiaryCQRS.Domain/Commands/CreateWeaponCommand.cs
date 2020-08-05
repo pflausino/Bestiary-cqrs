@@ -1,14 +1,16 @@
+using BestiaryCQRS.Domain.Core.Commands;
+using BestiaryCQRS.Domain.Entities;
 using System.ComponentModel.DataAnnotations;
 
 namespace BestiaryCQRS.BestiaryCQRS.Domain.Commands
 {
-    public class CreateWeaponCommand
+    public class CreateWeaponCommand : Command
     {
-        [Required]
+   
         public string Name { get; set; }
-        [Range(0, 99)]
         public int Strength { get; set; }
-        [Range(0, 99)]
         public int Magic { get; set; }
+
+       
     }
 }

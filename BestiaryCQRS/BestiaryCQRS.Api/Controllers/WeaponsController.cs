@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using BestiaryCQRS.BestiaryCQRS.Domain.Commands;
 using BestiaryCQRS.BestiaryCQRS.Domain.Interfaces;
+using BestiaryCQRS.Domain.Commands;
 using BestiaryCQRS.Domain.Entities;
 using BestiaryCQRS.Domain.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -15,8 +16,8 @@ namespace BestiaryCQRS.Api.Controllers
     {
 
         private readonly ICreateWeaponHandler createWeaponHandler;
-        private readonly IUpdateWeaponHandler updateWeaponHandler;
-        public WeaponsController(ICreateWeaponHandler createWeaponHandler, IUpdateWeaponHandler updateWeaponHandler)
+        //private readonly IUpdateWeaponHandler updateWeaponHandler;
+        public WeaponsController(ICreateWeaponHandler createWeaponHandler)
         {
             this.createWeaponHandler = createWeaponHandler;
         }
@@ -24,26 +25,26 @@ namespace BestiaryCQRS.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> PostWeapon(CreateWeaponCommand createWeaponCommand)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            createWeaponCommand.Validate(createWeaponCommand, new CreateWeaponCommandValidator());
+
+            if (createWeaponCommand.Invalid)
+                return BadRequest(createWeaponCommand.ValidationResult);
 
             var response = await this.createWeaponHandler.Handle(createWeaponCommand);
 
-            if (response.Any(r => !r.Success))
-                return BadRequest(response);
-
             return Ok(response);
         }
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutWeapon(Guid id, UpdateWeaponCommand updateWeaponCommand)
-        {
 
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+        //[HttpPut("{id}")]
+        //public async Task<IActionResult> PutWeapon(Guid id, UpdateWeaponCommand updateWeaponCommand)
+        //{
 
-            var response = await this.
+        //    if (!ModelState.IsValid)
+        //        return BadRequest(ModelState);
 
-        }
+        //    var response = await this.
+
+        //}
 
     }
 

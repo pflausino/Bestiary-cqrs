@@ -7,6 +7,7 @@ using BestiaryCQRS.Api.Filters;
 using BestiaryCQRS.BestiaryCQRS.Domain.Handlers;
 using BestiaryCQRS.BestiaryCQRS.Domain.Interfaces;
 using BestiaryCQRS.BestiaryCQRS.Infra.Migrations;
+using BestiaryCQRS.Domain.Core.Utils;
 using BestiaryCQRS.Domain.Interfaces;
 using BestiaryCQRS.Infra.Mappings;
 using BestiaryCQRS.Infra.Repositories;
@@ -63,10 +64,19 @@ namespace BestiaryCQRS.Api
             services.AddControllers(opt =>
             {
                 opt.Filters.Add<NHibernateSessionFilter>();
+                opt.Filters.Add<NotificationFilter>();
             });
+
+            //services.AddMvc(opt => 
+            //    opt.Filters.Add<NotificationFilter>()
+                
+            //).SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             services.AddScoped<IWeaponRepository, WeaponRepository>();
             services.AddScoped<ICreateWeaponHandler, CreateWeaponHandler>();
+            services.AddScoped<NotificationContext>();
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
