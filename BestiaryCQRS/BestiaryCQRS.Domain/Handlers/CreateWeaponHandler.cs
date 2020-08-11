@@ -20,11 +20,6 @@ namespace BestiaryCQRS.BestiaryCQRS.Domain.Handlers
 
         public async Task<Weapon> Handle(CreateWeaponCommand command)
         {
-            //if (this.repository.GetAll().Any(w => w.Name == command.Name))
-            //{
-            //    notification.Add(new NotificationDto("Ja Existe Uma Arma Com esse Nome", command));
-            //    return notification;
-            //}
 
             var weapon = new Weapon(
                 command.Name,
@@ -38,7 +33,7 @@ namespace BestiaryCQRS.BestiaryCQRS.Domain.Handlers
                 return null;
             }
 
-             await this.repository.AddAsync(weapon);
+            await this.repository.AddAsync(weapon);
 
             return weapon;
         }

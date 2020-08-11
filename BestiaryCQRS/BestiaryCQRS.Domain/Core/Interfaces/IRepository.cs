@@ -14,6 +14,7 @@ namespace BestiaryCQRS.Domain.Core.Interfaces
         IQueryable<TEntity> GetAll();
 
         Task UpdateAsync(TEntity entity);
+        Task UpdateAsync(object id, TEntity entity);
 
         Task RemoveAsync(object id);
     }

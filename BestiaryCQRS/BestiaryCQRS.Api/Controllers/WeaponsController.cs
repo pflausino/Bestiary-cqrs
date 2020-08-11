@@ -16,35 +16,59 @@ namespace BestiaryCQRS.Api.Controllers
     {
 
         private readonly ICreateWeaponHandler createWeaponHandler;
-        //private readonly IUpdateWeaponHandler updateWeaponHandler;
-        public WeaponsController(ICreateWeaponHandler createWeaponHandler)
+        private readonly IUpdateWeaponHandler updateWeaponHandler;
+        private readonly IWeaponRepository repository;
+        public WeaponsController(ICreateWeaponHandler createWeaponHandler, IUpdateWeaponHandler updateWeaponHandler, IWeaponRepository repository)
         {
             this.createWeaponHandler = createWeaponHandler;
+            this.updateWeaponHandler = updateWeaponHandler;
+            this.repository = repository;
+        }
+
+        [HttpGet]
+        [Route("{id}")]
+        public async Task<IActionResult> Get(Guid id)
+        {
+            var result = await this.repository.GetByIdAsync(id);
+
+            if (result == null)
+                return NotFound();
+
+            return Ok(result);
+        }
+        [HttpGet]
+        public async Task<IActionResult> Filter([FromQuery] string name)
+        {
+            throw new NotImplementedException();
         }
 
         [HttpPost]
         public async Task<IActionResult> PostWeapon(CreateWeaponCommand createWeaponCommand)
         {
-            createWeaponCommand.Validate(createWeaponCommand, new CreateWeaponCommandValidator());
-
-            if (createWeaponCommand.Invalid)
-                return BadRequest(createWeaponCommand.ValidationResult);
-
             var response = await this.createWeaponHandler.Handle(createWeaponCommand);
 
             return Ok(response);
         }
 
-        //[HttpPut("{id}")]
-        //public async Task<IActionResult> PutWeapon(Guid id, UpdateWeaponCommand updateWeaponCommand)
-        //{
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutWeapon(
+            [FromRoute] Guid id,
+            [FromBody] UpdateWeaponCommand updateWeaponCommand)
+        {
 
-        //    if (!ModelState.IsValid)
-        //        return BadRequest(ModelState);
+            var response = await this.updateWeaponHandler.Handle(id, updateWeaponCommand);
 
-        //    var response = await this.
+            return Ok(response);
 
-        //}
+        }
+        [HttpDelete]
+        [Route("id")]
+        public Task<IActionResult> Delete([FromRoute] Guid id)
+        {
+
+            throw new NotImplementedException();
+        }
+
 
     }
 

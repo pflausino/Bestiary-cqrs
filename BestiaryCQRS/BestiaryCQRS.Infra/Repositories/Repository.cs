@@ -46,6 +46,11 @@ namespace BestiaryCQRS.Infra.Repositories
         {
             return Session.UpdateAsync(entity);
         }
+
+        public Task UpdateAsync(object id, TEntity entity)
+        {
+            return Session.UpdateAsync(id, entity);
+        }
     }
 
 }

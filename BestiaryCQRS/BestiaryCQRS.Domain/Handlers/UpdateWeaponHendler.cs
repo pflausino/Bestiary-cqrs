@@ -4,28 +4,39 @@ using System.Threading.Tasks;
 using BestiaryCQRS.BestiaryCQRS.Domain.Commands;
 using BestiaryCQRS.BestiaryCQRS.Domain.Core.Dto;
 using BestiaryCQRS.BestiaryCQRS.Domain.Interfaces;
+using BestiaryCQRS.Domain.Core.Utils;
+using BestiaryCQRS.Domain.Entities;
 using BestiaryCQRS.Domain.Interfaces;
 
 namespace BestiaryCQRS.BestiaryCQRS.Domain.Handlers
 {
-    public class UpdateWeaponHendler : IUpdateWeaponHandler
+    public class UpdateWeaponHandler : IUpdateWeaponHandler
     {
         private readonly IWeaponRepository repository;
-        private IList<NotificationDto> notification;
-        public UpdateWeaponHendler(IWeaponRepository repository)
+        private readonly NotificationContext notification;
+        public UpdateWeaponHandler(IWeaponRepository repository, NotificationContext notification)
         {
-            this.repository = repository;
-            notification = new List<NotificationDto>();
+            this.repository = repository ?? throw new ArgumentNullException(nameof(repository));
+            this.notification = notification ?? throw new ArgumentNullException(nameof(notification));
         }
-        public async Task<IList<NotificationDto>> Handle(Guid id, UpdateWeaponCommand command)
+
+        public async Task<Weapon> Handle(Guid id, UpdateWeaponCommand command)
         {
-            if (await this.repository.GetByIdAsync(id) == null)
+            var originalWeapon = await this.repository.GetByIdAsync(id);
+            if (originalWeapon == null)
             {
-                notification.Add(new NotificationDto("Essa Arma Nao Esta Cadastrada", command));
-                return notification;
+                notification.AddNotification(id.ToString(), "Non Existe");
+                return null;
+            }
+            originalWeapon.UpdateWeapon(command.Name, command.Magic, command.Strength);
+            if (originalWeapon.Invalid)
+            {
+                notification.AddNotifications(originalWeapon.ValidationResult);
+                return null;
             }
 
-            return this.notification;
+            await this.repository.UpdateAsync(originalWeapon);
+            return originalWeapon;
 
         }
     }

@@ -1,3 +1,4 @@
+using System;
 using BestiaryCQRS.Domain.Core.Entities;
 
 namespace BestiaryCQRS.Domain.Entities
@@ -19,7 +20,16 @@ namespace BestiaryCQRS.Domain.Entities
         public virtual string Name { get; protected set; }
         public virtual int Strength { get; protected set; }
         public virtual int Magic { get; protected set; }
+
         // public virtual ElementeType ElementType { get; protect set; }
+        public virtual void UpdateWeapon(string name, int magic, int strength)
+        {
+            Name = name;
+            Magic = magic;
+            Strength = strength;
+
+            Validate(this, new WeaponValidator());
+        }
 
     }
 

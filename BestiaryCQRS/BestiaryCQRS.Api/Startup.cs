@@ -7,6 +7,7 @@ using BestiaryCQRS.Api.Filters;
 using BestiaryCQRS.BestiaryCQRS.Domain.Handlers;
 using BestiaryCQRS.BestiaryCQRS.Domain.Interfaces;
 using BestiaryCQRS.BestiaryCQRS.Infra.Migrations;
+using BestiaryCQRS.Domain.Commands;
 using BestiaryCQRS.Domain.Core.Utils;
 using BestiaryCQRS.Domain.Interfaces;
 using BestiaryCQRS.Infra.Mappings;
@@ -14,6 +15,7 @@ using BestiaryCQRS.Infra.Repositories;
 using FluentMigrator.Runner;
 using FluentNHibernate.Cfg;
 using FluentNHibernate.Cfg.Db;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -67,13 +69,13 @@ namespace BestiaryCQRS.Api
                 opt.Filters.Add<NotificationFilter>();
             });
 
-            //services.AddMvc(opt => 
-            //    opt.Filters.Add<NotificationFilter>()
-                
-            //).SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvc().AddFluentValidation(f =>
+               f.RegisterValidatorsFromAssemblyContaining<CreateWeaponCommandValidator>()
+            );
 
             services.AddScoped<IWeaponRepository, WeaponRepository>();
             services.AddScoped<ICreateWeaponHandler, CreateWeaponHandler>();
+            services.AddScoped<IUpdateWeaponHandler, UpdateWeaponHandler>();
             services.AddScoped<NotificationContext>();
 
 
