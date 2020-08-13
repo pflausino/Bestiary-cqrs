@@ -6,6 +6,7 @@ using BestiaryCQRS.BestiaryCQRS.Domain.Interfaces;
 using BestiaryCQRS.Domain.Commands;
 using BestiaryCQRS.Domain.Entities;
 using BestiaryCQRS.Domain.Interfaces;
+using BestiaryCQRS.Domain.Queries;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BestiaryCQRS.Api.Controllers
@@ -17,12 +18,21 @@ namespace BestiaryCQRS.Api.Controllers
 
         private readonly ICreateWeaponHandler createWeaponHandler;
         private readonly IUpdateWeaponHandler updateWeaponHandler;
+        private readonly IDeleteWeaponHandler deleteWeaponHandler;
+        private readonly IFilterByNameWeaponHandler filterByNameWeaponHandler;
         private readonly IWeaponRepository repository;
-        public WeaponsController(ICreateWeaponHandler createWeaponHandler, IUpdateWeaponHandler updateWeaponHandler, IWeaponRepository repository)
+        public WeaponsController(
+            ICreateWeaponHandler createWeaponHandler,
+            IUpdateWeaponHandler updateWeaponHandler,
+            IWeaponRepository repository,
+            IDeleteWeaponHandler deleteWeaponHandler,
+            IFilterByNameWeaponHandler filterByNameWeaponHandler)
         {
             this.createWeaponHandler = createWeaponHandler;
             this.updateWeaponHandler = updateWeaponHandler;
             this.repository = repository;
+            this.deleteWeaponHandler = deleteWeaponHandler;
+            this.filterByNameWeaponHandler = filterByNameWeaponHandler;
         }
 
         [HttpGet]
@@ -39,7 +49,10 @@ namespace BestiaryCQRS.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> Filter([FromQuery] string name)
         {
-            throw new NotImplementedException();
+            var query = new FilterByNameQuery(name);
+            var result = await filterByNameWeaponHandler.Handler(query);
+
+            return Ok(result);
         }
 
         [HttpPost]
@@ -61,12 +74,21 @@ namespace BestiaryCQRS.Api.Controllers
             return Ok(response);
 
         }
-        [HttpDelete]
-        [Route("id")]
-        public Task<IActionResult> Delete([FromRoute] Guid id)
+
+        [HttpPatch]
+        public async Task<IActionResult> Patch()
         {
 
             throw new NotImplementedException();
+        }
+
+        [HttpDelete]
+        [Route("{id}")]
+        public async Task<IActionResult> Delete([FromRoute] Guid id)
+        {
+            await this.deleteWeaponHandler.Handle(id);
+            return Ok();
+
         }
 
 

@@ -9,6 +9,7 @@ using BestiaryCQRS.BestiaryCQRS.Domain.Interfaces;
 using BestiaryCQRS.BestiaryCQRS.Infra.Migrations;
 using BestiaryCQRS.Domain.Commands;
 using BestiaryCQRS.Domain.Core.Utils;
+using BestiaryCQRS.Domain.Handlers;
 using BestiaryCQRS.Domain.Interfaces;
 using BestiaryCQRS.Infra.Mappings;
 using BestiaryCQRS.Infra.Repositories;
@@ -76,6 +77,8 @@ namespace BestiaryCQRS.Api
             services.AddScoped<IWeaponRepository, WeaponRepository>();
             services.AddScoped<ICreateWeaponHandler, CreateWeaponHandler>();
             services.AddScoped<IUpdateWeaponHandler, UpdateWeaponHandler>();
+            services.AddScoped<IDeleteWeaponHandler, DeleteWeaponHandler>();
+            services.AddScoped<IFilterByNameWeaponHandler, FilterByNameWeaponHandler>();
             services.AddScoped<NotificationContext>();
 
 
