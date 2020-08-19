@@ -35,6 +35,7 @@ namespace BestiaryCQRS.BestiaryCQRS.Domain.Handlers
                 return null;
             }
 
+
             await this.repository.UpdateAsync(originalWeapon);
             return originalWeapon;
 

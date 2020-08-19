@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using AutoMapper;
 using BestiaryCQRS.Api.Filters;
+using BestiaryCQRS.Api.Tools;
 using BestiaryCQRS.BestiaryCQRS.Domain.Handlers;
 using BestiaryCQRS.BestiaryCQRS.Domain.Interfaces;
 using BestiaryCQRS.BestiaryCQRS.Infra.Migrations;
@@ -42,6 +44,15 @@ namespace BestiaryCQRS.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers().AddNewtonsoftJson();
+
+            // Auto Mapper Configurations
+            var mapperConfig = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new MappingProfile());
+            });
+
+            IMapper mapper = mapperConfig.CreateMapper();
+            services.AddSingleton(mapper);
 
             var connectionString = Configuration["ConnectionString"];
 

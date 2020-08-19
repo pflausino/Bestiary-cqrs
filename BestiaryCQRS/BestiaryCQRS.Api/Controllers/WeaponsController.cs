@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
+using AutoMapper;
 using BestiaryCQRS.BestiaryCQRS.Domain.Commands;
 using BestiaryCQRS.BestiaryCQRS.Domain.Interfaces;
 using BestiaryCQRS.Domain.Commands;
@@ -23,18 +24,21 @@ namespace BestiaryCQRS.Api.Controllers
         private readonly IDeleteWeaponHandler deleteWeaponHandler;
         private readonly IFilterByNameWeaponHandler filterByNameWeaponHandler;
         private readonly IWeaponRepository repository;
+        private readonly IMapper mapper;
         public WeaponsController(
             ICreateWeaponHandler createWeaponHandler,
             IUpdateWeaponHandler updateWeaponHandler,
             IWeaponRepository repository,
             IDeleteWeaponHandler deleteWeaponHandler,
-            IFilterByNameWeaponHandler filterByNameWeaponHandler)
+            IFilterByNameWeaponHandler filterByNameWeaponHandler,
+            IMapper mapper)
         {
-            this.createWeaponHandler = createWeaponHandler;
-            this.updateWeaponHandler = updateWeaponHandler;
-            this.repository = repository;
-            this.deleteWeaponHandler = deleteWeaponHandler;
-            this.filterByNameWeaponHandler = filterByNameWeaponHandler;
+            this.createWeaponHandler = createWeaponHandler ?? throw new ArgumentNullException(nameof(createWeaponHandler));
+            this.updateWeaponHandler = updateWeaponHandler ?? throw new ArgumentNullException(nameof(updateWeaponHandler));
+            this.repository = repository ?? throw new ArgumentNullException(nameof(repository));
+            this.deleteWeaponHandler = deleteWeaponHandler ?? throw new ArgumentNullException(nameof(deleteWeaponHandler));
+            this.filterByNameWeaponHandler = filterByNameWeaponHandler ?? throw new ArgumentNullException(nameof(filterByNameWeaponHandler));
+            this.mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         [HttpGet]
@@ -70,29 +74,24 @@ namespace BestiaryCQRS.Api.Controllers
             [FromRoute] Guid id,
             [FromBody] UpdateWeaponCommand updateWeaponCommand)
         {
-
             var response = await this.updateWeaponHandler.Handle(id, updateWeaponCommand);
 
             return Ok(response);
 
         }
 
+        //Qual a Melhor maneira de implementar PAtch com CQRS
         [HttpPatch("{id}")]
-        public async Task<IActionResult> Patch([FromRoute] Guid id, [FromBody] JsonPatchDocument<Weapon> jsonPatch)
+        public async Task<IActionResult> Patch([FromRoute] Guid id, [FromBody] JsonPatchDocument<UpdateWeaponCommand> jsonPatch)
         {
             var originalWeapon = await repository.GetByIdAsync(id);
-            originalWeapon.PatchWeapon(jsonPatch);
-            // var updateWeaponCommand = new UpdateWeaponCommand();
-            if (originalWeapon.Invalid)
-            {
-                return BadRequest(originalWeapon.ValidationResult);
+            var updateWeaponCommand = mapper.Map<UpdateWeaponCommand>(originalWeapon);
 
-            }
-            // var response = await this.updateWeaponHandler.Handle(id, updateWeaponCommand);
-            // await repository.UpdateAsync(originalWeapon);
+            jsonPatch.ApplyTo(updateWeaponCommand);
 
-            return Ok();
+            var response = await this.updateWeaponHandler.Handle(id, updateWeaponCommand);
 
+            return Ok(response);
         }
 
         [HttpDelete]
