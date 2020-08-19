@@ -18,6 +18,10 @@ namespace BestiaryCQRS.Domain.Commands
             RuleFor(c => c.Magic)
                 .InclusiveBetween(1, 99)
                 .WithMessage("Magic deve ser entre 1 e 99");
+
+            RuleFor(w => w.RangeType)
+               .IsInEnum()
+               .WithMessage("O Range Type é Invalido");
         }
     }
 }

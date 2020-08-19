@@ -19,6 +19,10 @@ namespace BestiaryCQRS.Domain.Commands
             RuleFor(u => u.Strength)
                 .InclusiveBetween(0, 200)
                 .WithMessage("Strength Deve estar entre 0 e 200");
+
+            RuleFor(w => w.RangeType)
+                .IsInEnum()
+                .WithMessage("O Range Type é Invalido");
         }
 
     }

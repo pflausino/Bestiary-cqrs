@@ -28,7 +28,7 @@ namespace BestiaryCQRS.BestiaryCQRS.Domain.Handlers
                 notification.AddNotification(id.ToString(), "Non Existe");
                 return null;
             }
-            originalWeapon.UpdateWeapon(command.Name, command.Magic, command.Strength);
+            originalWeapon.UpdateWeapon(command.Name, command.Magic, command.Strength, command.RangeType);
             if (originalWeapon.Invalid)
             {
                 notification.AddNotifications(originalWeapon.ValidationResult);

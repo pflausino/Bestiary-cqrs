@@ -1,4 +1,5 @@
 using BestiaryCQRS.Domain.Entities;
+using BestiaryCQRS.Domain.Enums;
 using FluentNHibernate.Mapping;
 
 namespace BestiaryCQRS.Infra.Mappings
@@ -11,6 +12,7 @@ namespace BestiaryCQRS.Infra.Mappings
             Map(x => x.Name);
             Map(x => x.Strength);
             Map(x => x.Magic);
+            Map(x => x.RangeType).CustomType<RangeEnum>();
             Table("Weapon");
         }
 

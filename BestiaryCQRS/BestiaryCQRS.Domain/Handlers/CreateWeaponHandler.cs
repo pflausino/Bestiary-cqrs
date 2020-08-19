@@ -24,7 +24,8 @@ namespace BestiaryCQRS.BestiaryCQRS.Domain.Handlers
             var weapon = new Weapon(
                 command.Name,
                 command.Strength,
-                command.Magic
+                command.Magic,
+                command.RangeType
             );
 
             if (weapon.Invalid)

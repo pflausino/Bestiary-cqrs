@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using BestiaryCQRS.BestiaryCQRS.Domain.Commands;
 using BestiaryCQRS.BestiaryCQRS.Domain.Interfaces;
@@ -7,6 +8,7 @@ using BestiaryCQRS.Domain.Commands;
 using BestiaryCQRS.Domain.Entities;
 using BestiaryCQRS.Domain.Interfaces;
 using BestiaryCQRS.Domain.Queries;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BestiaryCQRS.Api.Controllers
@@ -75,11 +77,22 @@ namespace BestiaryCQRS.Api.Controllers
 
         }
 
-        [HttpPatch]
-        public async Task<IActionResult> Patch()
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> Patch([FromRoute] Guid id, [FromBody] JsonPatchDocument<Weapon> jsonPatch)
         {
+            var originalWeapon = await repository.GetByIdAsync(id);
+            originalWeapon.PatchWeapon(jsonPatch);
+            // var updateWeaponCommand = new UpdateWeaponCommand();
+            if (originalWeapon.Invalid)
+            {
+                return BadRequest(originalWeapon.ValidationResult);
 
-            throw new NotImplementedException();
+            }
+            // var response = await this.updateWeaponHandler.Handle(id, updateWeaponCommand);
+            // await repository.UpdateAsync(originalWeapon);
+
+            return Ok();
+
         }
 
         [HttpDelete]
