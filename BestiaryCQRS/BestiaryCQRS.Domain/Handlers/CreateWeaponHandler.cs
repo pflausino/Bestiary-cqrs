@@ -10,12 +10,14 @@ namespace BestiaryCQRS.BestiaryCQRS.Domain.Handlers
     public class CreateWeaponHandler : ICreateWeaponHandler
     {
         private readonly IWeaponRepository repository;
+        private readonly IWeaponMongoRepository mongoRepository;
         private readonly NotificationContext notificationContext;
 
-        public CreateWeaponHandler(IWeaponRepository repository, NotificationContext notificationContext)
+        public CreateWeaponHandler(IWeaponRepository repository, NotificationContext notificationContext, IWeaponMongoRepository mongoRepository)
         {
             this.repository = repository;
             this.notificationContext = notificationContext;
+            this.mongoRepository = mongoRepository;
         }
 
         public async Task<Weapon> Handle(CreateWeaponCommand command)
@@ -33,6 +35,8 @@ namespace BestiaryCQRS.BestiaryCQRS.Domain.Handlers
                 notificationContext.AddNotifications(weapon.ValidationResult);
                 return null;
             }
+
+            this.mongoRepository.Add(weapon);
 
             await this.repository.AddAsync(weapon);
 

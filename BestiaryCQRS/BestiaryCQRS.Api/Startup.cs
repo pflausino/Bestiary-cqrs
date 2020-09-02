@@ -10,11 +10,14 @@ using BestiaryCQRS.BestiaryCQRS.Domain.Handlers;
 using BestiaryCQRS.BestiaryCQRS.Domain.Interfaces;
 using BestiaryCQRS.BestiaryCQRS.Infra.Migrations;
 using BestiaryCQRS.Domain.Commands;
+using BestiaryCQRS.Domain.Core.Interfaces;
 using BestiaryCQRS.Domain.Core.Utils;
 using BestiaryCQRS.Domain.Handlers;
 using BestiaryCQRS.Domain.Interfaces;
 using BestiaryCQRS.Infra.Mappings;
+using BestiaryCQRS.Infra.MongoRepositories;
 using BestiaryCQRS.Infra.Repositories;
+using BestiaryCQRS.Infra.Tools;
 using FluentMigrator.Runner;
 using FluentNHibernate.Cfg;
 using FluentNHibernate.Cfg.Db;
@@ -78,6 +81,7 @@ namespace BestiaryCQRS.Api
             services.AddControllers(opt =>
             {
                 opt.Filters.Add<NHibernateSessionFilter>();
+                opt.Filters.Add<MongoUnitOfWorkFilter>();
                 opt.Filters.Add<NotificationFilter>();
             });
 
@@ -86,11 +90,18 @@ namespace BestiaryCQRS.Api
             );
 
             services.AddScoped<IWeaponRepository, WeaponRepository>();
+            services.AddScoped<IWeaponMongoRepository, WeaponMongoRepository>();
+
+
             services.AddScoped<ICreateWeaponHandler, CreateWeaponHandler>();
             services.AddScoped<IUpdateWeaponHandler, UpdateWeaponHandler>();
             services.AddScoped<IDeleteWeaponHandler, DeleteWeaponHandler>();
             services.AddScoped<IFilterByNameWeaponHandler, FilterByNameWeaponHandler>();
             services.AddScoped<NotificationContext>();
+
+            services.AddScoped<IMongoContext, MongoContext>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+
 
 
         }
